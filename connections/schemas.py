@@ -12,6 +12,9 @@ class BaseModelSchema(ma.ModelSchema):
 
 
 class PersonSchema(BaseModelSchema):
+    first_name = fields.Str()
+    last_name = fields.Str()
+    email = fields.Email()
 
     class Meta:
         model = Person
@@ -21,6 +24,9 @@ class ConnectionSchema(BaseModelSchema):
     from_person_id = fields.Integer()
     to_person_id = fields.Integer()
     connection_type = EnumField(ConnectionType)
+    from_person = fields.Nested(PersonSchema, only=["email", "first_name", "last_name"])
+    to_person = fields.Nested(PersonSchema, only=["email", "first_name", "last_name"])
+    # from_person = fields.Nested(PersonSchema)
 
     class Meta:
         model = Connection
