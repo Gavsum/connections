@@ -1,19 +1,23 @@
 from http import HTTPStatus
-
 from tests.factories import PersonFactory, ConnectionFactory
 
+EXPECTED_FIELDS=[
+    'connection_type',
+    'from_person',
+    'from_person_id',
+    'to_person',
+    'to_person_id',
+    'id'
+]
 
-# Expected Fields
 
 def test_can_get_connections(db, testapp):
-    # Make some Connections
+    ConnectionFactory.create_batch(10)
+    db.session.commit()
 
-    # Commit the connections to the db
+    res = testapp.get('/connections')
 
-    # call the endpoint with testapp.get('/connectoins')
-
-    # assert responsecode ok
-
-    # assert # of responded connections == number of created
-
-    # assert that all connections contain the expected fields specified above
+    assert len(res.json) == 10
+    for connection in res.json:
+        for field in EXPECTED_FIELDS:
+            assert field in connection
