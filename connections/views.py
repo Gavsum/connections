@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from webargs.flaskparser import use_args
 from webargs import fields
 from connections.models.person import Person
-from connections.models.connection import Connection
+from connections.models.connection import Connection, ConnectionType
 from connections.schemas import ConnectionSchema, PersonSchema
 
 blueprint = Blueprint('connections', __name__)
@@ -49,9 +49,23 @@ def get_connections():
     return connection_schema.jsonify(connections), HTTPStatus.OK
 
 
-
 @blueprint.route('/connections', methods=['POST'])
 @use_args(ConnectionSchema(), locations=('json',))
 def create_connection(connection):
     connection.save()
     return ConnectionSchema().jsonify(connection), HTTPStatus.CREATED
+
+# This works but I think it should be using Validation or something 
+# from marshmallow to validate if new_type is in ConnectionType 
+# which might allow it to automagically throw the correct error type
+# as is specified in the app.py file
+
+@blueprint.route('/connections/<connection_id>', methods=['PATCH'])
+@use_args({"connection_type": fields.Str(location="json")})
+def patch_connection(args, connection_id):
+    new_type = args['connection_type']
+    if(ConnectionType.has_type(new_type)):
+        Connection.query.filter_by(id=connection_id).update({"connection_type": new_type})
+        return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
+    else:
+        return jsonify({"message": "invalid connection type"}), HTTPStatus.BAD_REQUEST

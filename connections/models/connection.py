@@ -15,6 +15,10 @@ class ConnectionType(enum.Enum):
     friend = 'friend'
     coworker = 'coworker'
 
+    @classmethod
+    def has_type(cls, type):
+        return any(type == item.value for item in cls)
+
 
 class Connection(Model, CRUDMixin, CreatedUpdatedMixin):
     id = db.Column(db.Integer, primary_key=True)
