@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from tests.factories import PersonFactory
-from sqlalchemy.orm import joinedload
 from connections.models.connection import Connection
 from connections.models.person import Person
 

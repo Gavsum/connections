@@ -10,7 +10,7 @@ def person_payload():
     return {
         'first_name': 'Bob',
         'last_name': 'Loblaw',
-        'email': 'bob.loblaw@lawblog.co',
+        'email': 'bob.loblaw@lawblog.com',
     }
 
 

@@ -1,5 +1,5 @@
-import pytest
 from tests.factories import ConnectionFactory, PersonFactory
+
 
 def test_mutual_friends(db):
     instance = PersonFactory()

@@ -1,9 +1,8 @@
 from http import HTTPStatus
-import json
 from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import joinedload
 from webargs.flaskparser import use_args
-from webargs import fields
+from webargs import fields, ValidationError
 from connections.models.person import Person
 from connections.models.connection import Connection, ConnectionType
 from connections.schemas import ConnectionSchema, PersonSchema
@@ -15,21 +14,21 @@ blueprint = Blueprint('connections', __name__)
 @use_args({"sort": fields.Str(location="query")})
 def get_people(args):
     people_schema = PersonSchema(many=True)
+    order_by = None
 
     if(args):
         if(args['sort'] == '-created_at'):
-            people = Person.query.order_by(Person.created_at.desc()).all()
+            order_by = Person.created_at.desc()
         elif(args['sort'] == 'created_at'):
-            people = Person.query.order_by(Person.created_at).all()
+            order_by = Person.created_at
         elif(args['sort'] == '-name'):
-            people = Person.query.order_by(Person.first_name.desc()).all()
+            order_by = Person.first_name.desc()
         elif(args['sort'] == 'name'):
-            people = Person.query.order_by(Person.first_name).all()
-        else:
-            people = Person.query.options(joinedload(Person.connections)).all()
+            order_by = Person.first_name
 
-    else:
-        people = Person.query.options(joinedload(Person.connections)).all()
+    people = (Person.query
+              .order_by(order_by)
+              .all())
 
     return people_schema.jsonify(people), HTTPStatus.OK
 
@@ -55,17 +54,21 @@ def create_connection(connection):
     connection.save()
     return ConnectionSchema().jsonify(connection), HTTPStatus.CREATED
 
-# This works but I think it should be using Validation or something 
-# from marshmallow to validate if new_type is in ConnectionType 
-# which might allow it to automagically throw the correct error type
-# as is specified in the app.py file
 
 @blueprint.route('/connections/<connection_id>', methods=['PATCH'])
 @use_args({"connection_type": fields.Str(location="json")})
 def patch_connection(args, connection_id):
+    Connection.query.get_or_404(connection_id)
     new_type = args['connection_type']
     if(ConnectionType.has_type(new_type)):
         Connection.query.filter_by(id=connection_id).update({"connection_type": new_type})
         return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
     else:
-        return jsonify({"message": "invalid connection type"}), HTTPStatus.BAD_REQUEST
+        raise ValidationError("Invalid connection type: {}".format(new_type))
+
+
+@blueprint.route('/connections/<connection_id>', methods=['DELETE'])
+def delete_connection(connection_id):
+    connectionToDelete = Connection.query.get_or_404(connection_id)
+    connectionToDelete.delete()
+    return '', HTTPStatus.NO_CONTENT

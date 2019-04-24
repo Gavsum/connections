@@ -15,6 +15,12 @@ class PersonSchema(BaseModelSchema):
     first_name = fields.Str()
     last_name = fields.Str()
     email = fields.Email()
+    # Two way nesting ftw https://bit.ly/2XCnWM6
+    connections = fields.Nested(
+        'ConnectionSchema',
+        many=True, 
+        only=["connection_type", "id", "to_person_id"]
+    )
 
     class Meta:
         model = Person

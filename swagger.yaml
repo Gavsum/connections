@@ -14,6 +14,12 @@ paths:
       operationId: "getPeople"
       produces:
       - "application/json"
+      parameters:
+      - in: "query"
+        name: "sort"
+        type: "string"
+        required: false
+        description: "optional sort parameters: created_at, name. Prefix with (-) for desc."
       responses:        
         200:
           description: "successful operation"
@@ -23,6 +29,7 @@ paths:
               $ref: "#/definitions/Person"
         400:
           description: "Invalid input"
+
     post:
       summary: "Create a new person"
       description: ""
@@ -47,6 +54,7 @@ paths:
               $ref: "#/definitions/Person"
         400:
           description: "Invalid input"
+
   /connections:
     get:
       summary: "Get list of connections"
@@ -63,6 +71,7 @@ paths:
               $ref: "#/definitions/Connection"
         400:
           description: "Invalid input"
+
     post:
       summary: "Create a new connection"
       description: ""
@@ -87,6 +96,69 @@ paths:
               $ref: "#/definitions/Connection"
         400:
           description: "Invalid input"
+
+  /connections/{id}:
+    patch:
+      summary: "Modify an existing connection's type"
+      description: ""
+      operationId: "patchConnection"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "new type"
+        description: "new connection_type value"
+        required: true
+        schema:
+          type: "object"
+          required:
+            - "connection_type"
+          properties:
+            connection_type: 
+              type: "string"
+      - in: "path"
+        name: "id"
+        required: true
+        schema:
+          type: "integer"
+        description: "The connection's id"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Connection"
+        400:
+          description: "Input failed validation. Invalid connection_type."
+        404:
+          description: "The requested URL was not found on the server. 
+                       If you entered the URL manually please check your 
+                       spelling and try again."
+
+    delete:
+      summary: "Delete an existing connection"
+      description: ""
+      operationId: "deleteConnection"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        schema:
+          type: "integer"
+        description: "The connection's id"
+      responses:
+        204:
+          description: "successful deletion"
+        404:
+          description: "The requested URL was not found on the server. 
+                       If you entered the URL manually please check your 
+                       spelling and try again."
+
 definitions:
   Person:
     type: "object"

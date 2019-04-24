@@ -2,6 +2,7 @@ from http import HTTPStatus
 from tests.factories import PersonFactory, ConnectionFactory
 from connections.models.connection import Connection
 from connections.models.person import Person
+
 EXPECTED_FIELDS = [
     'connection_type',
     'from_person',
