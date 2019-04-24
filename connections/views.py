@@ -1,16 +1,18 @@
 from http import HTTPStatus
+
 from flask import Blueprint
-from webargs.flaskparser import use_args
 from webargs import fields
-from connections.models.person import Person
+from webargs.flaskparser import use_args
+
 from connections.models.connection import Connection, ConnectionType
+from connections.models.person import Person
 from connections.schemas import ConnectionSchema, PersonSchema
 
 blueprint = Blueprint('connections', __name__)
 
 
 @blueprint.route('/people', methods=['GET'])
-@use_args({"sort": fields.Str(location="query")})
+@use_args({'sort': fields.Str(location='query')})
 def get_people(args):
     people_schema = PersonSchema(many=True)
     order_by = None
@@ -40,7 +42,7 @@ def create_person(person):
 
 
 @blueprint.route('/people/<person_id>/mutual_friends', methods=['GET'])
-@use_args({"target_id": fields.Integer(location="query", required=True)})
+@use_args({'target_id': fields.Integer(location='query', required=True)})
 def get_mutual_friends(args, person_id):
     source = Person.query.get_or_404(person_id)
     target = Person.query.get_or_404(args['target_id'])
@@ -67,21 +69,21 @@ def create_connection(connection):
 
 
 @blueprint.route('/connections/<connection_id>', methods=['PATCH'])
-@use_args({"connection_type": fields.Str(
-    location="json",
+@use_args({'connection_type': fields.Str(
+    location='json',
     validate=lambda x: ConnectionType.has_type(x)
 )})
 def patch_connection(args, connection_id):
     Connection.query.get_or_404(connection_id)
     (Connection.query
         .filter_by(id=connection_id)
-        .update({"connection_type": args['connection_type']}))
+        .update({'connection_type': args['connection_type']}))
 
     return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
 
 
 @blueprint.route('/connections/<connection_id>', methods=['DELETE'])
 def delete_connection(connection_id):
-    connectionToDelete = Connection.query.get_or_404(connection_id)
-    connectionToDelete.delete()
+    connection_to_delete = Connection.query.get_or_404(connection_id)
+    connection_to_delete.delete()
     return '', HTTPStatus.NO_CONTENT

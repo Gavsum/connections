@@ -1,4 +1,4 @@
-from factory import Faker, Sequence, SubFactory, RelatedFactory, post_generation, Sequence
+from factory import Faker, Sequence, SubFactory
 from factory.alchemy import SQLAlchemyModelFactory
 
 from connections.database import db
