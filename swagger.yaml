@@ -142,8 +142,6 @@ paths:
       summary: "Delete an existing connection"
       description: ""
       operationId: "deleteConnection"
-      produces:
-      - "application/json"
       parameters:
       - in: "path"
         name: "id"

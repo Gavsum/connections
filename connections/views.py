@@ -1,8 +1,7 @@
 from http import HTTPStatus
-from flask import Blueprint, request, jsonify
-from sqlalchemy.orm import joinedload
+from flask import Blueprint
 from webargs.flaskparser import use_args
-from webargs import fields, ValidationError
+from webargs import fields
 from connections.models.person import Person
 from connections.models.connection import Connection, ConnectionType
 from connections.schemas import ConnectionSchema, PersonSchema
@@ -40,6 +39,18 @@ def create_person(person):
     return PersonSchema().jsonify(person), HTTPStatus.CREATED
 
 
+@blueprint.route('/people/<person_id>/mutual_friends', methods=['GET'])
+@use_args({"target_id": fields.Integer(location="query", required=True)})
+def get_mutual_friends(args, person_id):
+    source = Person.query.get_or_404(person_id)
+    target = Person.query.get_or_404(args['target_id'])
+    people_schema = PersonSchema(many=True)
+
+    mutuals = source.mutual_friends(target)
+
+    return people_schema.jsonify(mutuals), HTTPStatus.OK
+
+
 @blueprint.route('/connections', methods=['GET'])
 def get_connections():
     connection_schema = ConnectionSchema(many=True)
@@ -56,15 +67,17 @@ def create_connection(connection):
 
 
 @blueprint.route('/connections/<connection_id>', methods=['PATCH'])
-@use_args({"connection_type": fields.Str(location="json")})
+@use_args({"connection_type": fields.Str(
+    location="json",
+    validate=lambda x: ConnectionType.has_type(x)
+)})
 def patch_connection(args, connection_id):
     Connection.query.get_or_404(connection_id)
-    new_type = args['connection_type']
-    if(ConnectionType.has_type(new_type)):
-        Connection.query.filter_by(id=connection_id).update({"connection_type": new_type})
-        return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
-    else:
-        raise ValidationError("Invalid connection type: {}".format(new_type))
+    (Connection.query
+        .filter_by(id=connection_id)
+        .update({"connection_type": args['connection_type']}))
+
+    return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
 
 
 @blueprint.route('/connections/<connection_id>', methods=['DELETE'])
