@@ -17,9 +17,10 @@ paths:
       parameters:
       - in: "query"
         name: "sort"
-        type: "string"
         required: false
         description: "optional sort parameters: created_at, name. Prefix with (-) for desc."
+        schema:
+          type: "string"
       responses:        
         200:
           description: "successful operation"
@@ -54,6 +55,40 @@ paths:
               $ref: "#/definitions/Person"
         400:
           description: "Invalid input"
+  
+  /people/{id}/mutual_friends:
+    get:
+      summary: "Get a list of mutual friends shared between two person entities"
+      description: ""
+      operationId: "getMutualFriends"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "target_id"
+        description: "id of target person entity for mutual friends query"
+        required: true
+        schema:
+          type: "integer" 
+      - in: "path"
+        name: "id"
+        description: "id of the source person entity for mutual friends query"
+        required: true
+        schema:
+          type: "integer"
+      response:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Person"
+        400: 
+          description: "Input failed validation"
+        404: 
+          description: "The requested URL was not found on the server. 
+                        If you entered the URL manually please check your 
+                        spelling and try again." 
 
   /connections:
     get:
