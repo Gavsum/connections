@@ -15,7 +15,7 @@ def test_can_create_connection(db, testapp):
         'connection_type': 'mother',
     }
     res = testapp.post('/connections', json=payload)
-
+    assert 0
     assert res.status_code == HTTPStatus.CREATED
 
     assert 'id' in res.json
