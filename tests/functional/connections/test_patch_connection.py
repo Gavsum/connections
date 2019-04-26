@@ -48,7 +48,6 @@ def test_patch_validations(db, testapp, connection_payload, field, value, error_
     assert res.json['description'] == 'Input failed validation.'
     errors = res.json['errors']
 
-    # This is kind of hacky
     if(connection_payload[field] is None):
         assert error_message in errors[field]
     else:

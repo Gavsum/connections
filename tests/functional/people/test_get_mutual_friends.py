@@ -24,7 +24,6 @@ def test_can_get_mutual_friends(db, testapp):
         ConnectionFactory(from_person=target, to_person=f,
                           connection_type='friend')
 
-    # mutual connections, but not friends
     decoy = PersonFactory()
     ConnectionFactory(from_person=instance, to_person=decoy,
                       connection_type='coworker')
@@ -35,12 +34,13 @@ def test_can_get_mutual_friends(db, testapp):
 
     expected_mutual_friend_ids = [f.id for f in mutual_friends]
 
-    res = testapp.get('/people/{}/mutual_friends?target_id={}'.format(instance.id, target.id))
-    assert res.status_code == HTTPStatus.OK
+    res = (testapp.get('/people/{}/mutual_friends?target_id={}'
+           .format(instance.id, target.id)))
 
     res_reverse = (testapp.get('/people/{}/mutual_friends?target_id={}'
                    .format(target.id, instance.id)))
 
+    assert res.status_code == HTTPStatus.OK
     assert res_reverse.status_code == HTTPStatus.OK
     assert len(res.json) == 3
 

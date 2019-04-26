@@ -4,9 +4,8 @@ from flask import Flask, jsonify
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import IntegrityError
 
-
 from connections.config import Config
-from connections.extensions import cors, db, ma, migrate, cache
+from connections.extensions import cache, cors, db, ma, migrate
 from connections.views import blueprint
 
 

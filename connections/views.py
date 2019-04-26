@@ -4,10 +4,10 @@ from flask import Blueprint
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from connections.extensions import cache
 from connections.models.connection import Connection, ConnectionType
 from connections.models.person import Person
 from connections.schemas import ConnectionSchema, PersonSchema
-from connections.extensions import cache
 
 blueprint = Blueprint('connections', __name__)
 
@@ -16,7 +16,6 @@ blueprint = Blueprint('connections', __name__)
 @use_args({'sort': fields.Str(location='query')})
 @cache.cached(key_prefix='all_people')
 def get_people(args):
-    print("Cache not used?")
     people_schema = PersonSchema(many=True)
     order_by = None
 
@@ -49,7 +48,6 @@ def create_person(person):
 @use_args({'target_id': fields.Integer(location='query', required=True)})
 @cache.cached(key_prefix='mutual_friends', query_string=True)
 def get_mutual_friends(args, person_id):
-    print("mutual friends cache not used")
     source = Person.query.get_or_404(person_id)
     target = Person.query.get_or_404(args['target_id'])
     people_schema = PersonSchema(many=True)
