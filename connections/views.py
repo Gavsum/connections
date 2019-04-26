@@ -47,7 +47,7 @@ def create_person(person):
 
 @blueprint.route('/people/<person_id>/mutual_friends', methods=['GET'])
 @use_args({'target_id': fields.Integer(location='query', required=True)})
-@cache.cached()
+@cache.cached(key_prefix='mutual_friends')
 def get_mutual_friends(args, person_id):
     source = Person.query.get_or_404(person_id)
     target = Person.query.get_or_404(args['target_id'])
@@ -59,7 +59,7 @@ def get_mutual_friends(args, person_id):
 
 
 @blueprint.route('/connections', methods=['GET'])
-@cache.cached()
+@cache.cached(key_prefix='all_connections')
 def get_connections():
     connection_schema = ConnectionSchema(many=True)
     connections = Connection.query.all()
@@ -71,6 +71,7 @@ def get_connections():
 @use_args(ConnectionSchema(), locations=('json',))
 def create_connection(connection):
     connection.save()
+    cache.delete('all_connections')
     return ConnectionSchema().jsonify(connection), HTTPStatus.CREATED
 
 
@@ -84,6 +85,8 @@ def patch_connection(args, connection_id):
     (Connection.query
         .filter_by(id=connection_id)
         .update({'connection_type': args['connection_type']}))
+    cache.delete('all_connections')
+    cache.delete('mutual_friends')
 
     return ConnectionSchema().jsonify(Connection.query.get(connection_id)), HTTPStatus.OK
 
@@ -92,4 +95,6 @@ def patch_connection(args, connection_id):
 def delete_connection(connection_id):
     connection_to_delete = Connection.query.get_or_404(connection_id)
     connection_to_delete.delete()
+    cache.delete('all_connections')
+    cache.delete('mutual_friends')
     return '', HTTPStatus.NO_CONTENT
