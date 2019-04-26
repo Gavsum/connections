@@ -14,8 +14,9 @@ blueprint = Blueprint('connections', __name__)
 
 @blueprint.route('/people', methods=['GET'])
 @use_args({'sort': fields.Str(location='query')})
-@cache.cached()
+@cache.cached(key_prefix='all_people')
 def get_people(args):
+    print("Cache not used?")
     people_schema = PersonSchema(many=True)
     order_by = None
 
@@ -40,6 +41,7 @@ def get_people(args):
 @use_args(PersonSchema(), locations=('json',))
 def create_person(person):
     person.save()
+    cache.delete('all_people')
     return PersonSchema().jsonify(person), HTTPStatus.CREATED
 
 
