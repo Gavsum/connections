@@ -12,9 +12,9 @@ class BaseModelSchema(ma.ModelSchema):
 
 
 class PersonSchema(BaseModelSchema):
-    first_name = fields.Str()
+    first_name = fields.Str(required=True)
     last_name = fields.Str()
-    email = fields.Email()
+    email = fields.Email(required=True)
     # Two way nesting ftw https://bit.ly/2XCnWM6
     # connections = fields.Nested(
     #     'ConnectionSchema',
@@ -27,12 +27,11 @@ class PersonSchema(BaseModelSchema):
 
 
 class ConnectionSchema(BaseModelSchema):
-    from_person_id = fields.Integer()
-    to_person_id = fields.Integer()
+    from_person_id = fields.Integer(required=True)
+    to_person_id = fields.Integer(required=True)
     connection_type = EnumField(ConnectionType)
     from_person = fields.Nested(PersonSchema, only=['email', 'first_name', 'last_name'])
     to_person = fields.Nested(PersonSchema, only=['email', 'first_name', 'last_name'])
-    # from_person = fields.Nested(PersonSchema)
 
     class Meta:
         model = Connection
