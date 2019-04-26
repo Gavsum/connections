@@ -40,7 +40,9 @@ def test_can_create_connection(db, testapp):
 
 @pytest.mark.parametrize('field, value, error_message', [
     pytest.param('from_person_id', None, 'Field may not be null.', id='missing from_person_id'),
+    pytest.param('from_person_id', "blue", "Not a valid integer.",  id='invalid from id'),
     pytest.param('to_person_id', None, 'Field may not be null', id='missing to_person_id'),
+    pytest.param('to_person_id', "blue", "Not a valid integer.", id="invalid to id"),
     pytest.param('connection_type', None, 'Field may not be null', id='missing connection_type'),
     pytest.param(
         'connection_type',

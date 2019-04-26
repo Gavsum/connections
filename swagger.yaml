@@ -30,7 +30,6 @@ paths:
               $ref: "#/definitions/Person"
         400:
           description: "Invalid input"
-
     post:
       summary: "Create a new person"
       description: ""
@@ -55,7 +54,6 @@ paths:
               $ref: "#/definitions/Person"
         400:
           description: "Invalid input"
-  
   /people/{id}/mutual_friends:
     get:
       summary: "Get a list of mutual friends shared between two person entities"
@@ -89,7 +87,6 @@ paths:
           description: "The requested URL was not found on the server. 
                         If you entered the URL manually please check your 
                         spelling and try again." 
-
   /connections:
     get:
       summary: "Get list of connections"
@@ -106,7 +103,6 @@ paths:
               $ref: "#/definitions/Connection"
         400:
           description: "Invalid input"
-
     post:
       summary: "Create a new connection"
       description: ""
@@ -131,7 +127,6 @@ paths:
               $ref: "#/definitions/Connection"
         400:
           description: "Invalid input"
-
   /connections/{id}:
     patch:
       summary: "Modify an existing connection's type"
@@ -143,13 +138,11 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "new type"
+        name: "body"
         description: "new connection_type value"
         required: true
         schema:
           type: "object"
-          required:
-            - "connection_type"
           properties:
             connection_type: 
               type: "string"
@@ -158,7 +151,7 @@ paths:
         required: true
         schema:
           type: "integer"
-        description: "The connection's id"
+        description: "The id of the connection to patch"
       responses:
         200:
           description: "successful operation"
@@ -167,12 +160,11 @@ paths:
             items:
               $ref: "#/definitions/Connection"
         400:
-          description: "Input failed validation. Invalid connection_type."
+          description: "Invalid input."
         404:
           description: "The requested URL was not found on the server. 
                        If you entered the URL manually please check your 
                        spelling and try again."
-
     delete:
       summary: "Delete an existing connection"
       description: ""
@@ -191,7 +183,6 @@ paths:
           description: "The requested URL was not found on the server. 
                        If you entered the URL manually please check your 
                        spelling and try again."
-
 definitions:
   Person:
     type: "object"

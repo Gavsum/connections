@@ -47,8 +47,9 @@ def create_person(person):
 
 @blueprint.route('/people/<person_id>/mutual_friends', methods=['GET'])
 @use_args({'target_id': fields.Integer(location='query', required=True)})
-@cache.cached(key_prefix='mutual_friends')
+@cache.cached(key_prefix='mutual_friends', query_string=True)
 def get_mutual_friends(args, person_id):
+    print("mutual friends cache not used")
     source = Person.query.get_or_404(person_id)
     target = Person.query.get_or_404(args['target_id'])
     people_schema = PersonSchema(many=True)
@@ -72,6 +73,7 @@ def get_connections():
 def create_connection(connection):
     connection.save()
     cache.delete('all_connections')
+    cache.delete('mutual_friends')
     return ConnectionSchema().jsonify(connection), HTTPStatus.CREATED
 
 
