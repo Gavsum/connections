@@ -4,8 +4,9 @@ from flask import Flask, jsonify
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import IntegrityError
 
+
 from connections.config import Config
-from connections.extensions import cors, db, ma, migrate
+from connections.extensions import cors, db, ma, migrate, cache
 from connections.views import blueprint
 
 
@@ -25,6 +26,10 @@ def register_extensions(app):
     migrate.init_app(app, db)
     ma.init_app(app)
     cors.init_app(app)
+    cache.init_app(app, config={
+        'CACHE_TYPE': 'simple',
+        'CACHE_DEFAULT_TIMEOUT': 300
+    })
 
 
 def register_blueprints(app):

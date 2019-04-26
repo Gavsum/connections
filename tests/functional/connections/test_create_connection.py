@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
-from tests.factories import PersonFactory
 import pytest
+from tests.factories import PersonFactory
 
 from connections.models.connection import Connection
+
 
 @pytest.fixture
 def connection_payload():
@@ -21,7 +22,7 @@ def test_can_create_connection(db, testapp):
     payload = {
         'from_person_id': person_from.id,
         'to_person_id': person_to.id,
-        'connection_type': 'mother', 
+        'connection_type': 'mother',
     }
     res = testapp.post('/connections', json=payload)
 
@@ -39,13 +40,13 @@ def test_can_create_connection(db, testapp):
 
 @pytest.mark.parametrize('field, value, error_message', [
     pytest.param('from_person_id', None, 'Field may not be null.', id='missing from_person_id'),
-    pytest.param('to_person_id', None, 'Field may not be null', id="missing to_person_id"),
-    pytest.param('connection_type', None, 'Field may not be null', id="missing connection_type"),
+    pytest.param('to_person_id', None, 'Field may not be null', id='missing to_person_id'),
+    pytest.param('connection_type', None, 'Field may not be null', id='missing connection_type'),
     pytest.param(
         'connection_type',
         'doppelganger',
         'Invalid enum member doppelganger',
-        id="invalid connection type")
+        id='invalid connection type')
 ])
 def test_create_person_validations(db, testapp, connection_payload, field, value, error_message):
     connection_payload[field] = value

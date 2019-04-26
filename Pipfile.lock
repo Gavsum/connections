@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1bc3f17d40708c9277edb6bd58a1801c91dd49f2655399ce39d81229904df2ad"
+            "sha256": "e4649389ca28f657c4be4f1084981951cf55fdb7f11242224b386f87f4944b33"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -36,6 +36,14 @@
             ],
             "index": "pypi",
             "version": "==1.0.2"
+        },
+        "flask-caching": {
+            "hashes": [
+                "sha256:a21c3e98badfea57c9e91e3485ec0b0c029261ae4badbac876a65a834db6c368",
+                "sha256:cc25b0800fb0ae4e3fcaaf12203263c564f41197593283669b81216089803a1b"
+            ],
+            "index": "pypi",
+            "version": "==1.7.1"
         },
         "flask-cors": {
             "hashes": [
@@ -275,10 +283,10 @@
         },
         "flake8-quotes": {
             "hashes": [
-                "sha256:fd9127ad8bbcf3b546fa7871a5266fd8623ce765ebe3d5aa5eabb80c01212b26"
+                "sha256:10c9af6b472d4302a8e721c5260856c3f985c5c082b04841aefd2f808ac02038"
             ],
             "index": "pypi",
-            "version": "==1.0.0"
+            "version": "==2.0.1"
         },
         "mccabe": {
             "hashes": [
